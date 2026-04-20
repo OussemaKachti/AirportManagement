@@ -86,5 +86,12 @@ Console.WriteLine();
 Console.WriteLine("14) Extension method UpperFullName()");
 Console.WriteLine(TestData.Travellers.First().UpperFullName());
 
+Passenger mixedCasePassenger = new Passenger
+{
+    FirstName = "ahmed",
+    LastName = "ben salem"
+};
+Console.WriteLine(mixedCasePassenger.UpperFullName());
+
 Console.WriteLine();
 Console.WriteLine("================== FIN ATELIER 3 ==================");
