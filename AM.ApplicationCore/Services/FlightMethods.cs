@@ -16,17 +16,10 @@ public class FlightMethods : IFlightMethods
 
     public List<DateTime> GetFlightDates(string destination)
     {
-        var result = new List<DateTime>();
-
-        for (int i = 0; i < Flights.Count; i++)
-        {
-            if (string.Equals(Flights[i].Destination, destination, StringComparison.OrdinalIgnoreCase))
-            {
-                result.Add(Flights[i].FlightDate);
-            }
-        }
-
-        return result;
+        return Flights
+            .Where(f => string.Equals(f.Destination, destination, StringComparison.OrdinalIgnoreCase))
+            .Select(f => f.FlightDate)
+            .ToList();
     }
 
     public List<DateTime> GetFlightDatesWithForeach(string destination)
@@ -74,6 +67,93 @@ public class FlightMethods : IFlightMethods
         }
 
         return result;
+    }
+
+    public List<string> ShowFlightDetails(Plane plane)
+    {
+        return Flights
+            .Where(f => f.Plane == plane)
+            .Select(f => $"Date: {f.FlightDate:dd/MM/yyyy HH:mm:ss} | Destination: {f.Destination}")
+            .ToList();
+    }
+
+    public int ProgrammedFlightNumber(DateTime startDate)
+    {
+        DateTime endDate = startDate.AddDays(7);
+
+        return Flights.Count(f => f.FlightDate >= startDate && f.FlightDate < endDate);
+    }
+
+    public double DurationAverage(string destination)
+    {
+        var filteredFlights = Flights
+            .Where(f => string.Equals(f.Destination, destination, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        if (filteredFlights.Count == 0)
+        {
+            return 0;
+        }
+
+        return filteredFlights.Average(f => f.EstimatedDuration);
+    }
+
+    public List<Flight> OrderedDurationFlights()
+    {
+        return Flights
+            .OrderByDescending(f => f.EstimatedDuration)
+            .ToList();
+    }
+
+    public Flight? LongestFlight()
+    {
+        return Flights
+            .OrderByDescending(f => f.EstimatedDuration)
+            .FirstOrDefault();
+    }
+
+    public List<Traveller> SeniorTravellers(Flight flight)
+    {
+        return flight.Passengers
+            .OfType<Traveller>()
+            .OrderBy(t => t.BirthDate)
+            .Take(3)
+            .ToList();
+    }
+
+    public IEnumerable<IGrouping<string, Flight>> DestinationGroupedFlights()
+    {
+        return Flights
+            .GroupBy(f => f.Destination)
+            .OrderBy(g => g.Key);
+    }
+
+    public Dictionary<string, int> FlightCountByDestination()
+    {
+        return Flights
+            .GroupBy(f => f.Destination)
+            .ToDictionary(g => g.Key, g => g.Count());
+    }
+
+    public Flight? MostOccupiedFlight()
+    {
+        return Flights
+            .OrderByDescending(f => f.Passengers.Count)
+            .FirstOrDefault();
+    }
+
+    public List<string> GetDestinations()
+    {
+        return Flights
+            .Select(f => f.Destination)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(d => d)
+            .ToList();
+    }
+
+    public bool ExistsParisFlight()
+    {
+        return Flights.Any(f => string.Equals(f.Destination, "Paris", StringComparison.OrdinalIgnoreCase));
     }
 
     private static bool IsSimpleType(Type type)
