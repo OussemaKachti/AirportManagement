@@ -5,6 +5,7 @@ namespace AM.ApplicationCore.Domain;
 public class Flight
 {
     public int FlightId { get; set; }
+    public string? AirlineLogo { get; set; }
     public string Departure { get; set; } = string.Empty;
     public string Destination { get; set; } = string.Empty;
     public DateTime FlightDate { get; set; }

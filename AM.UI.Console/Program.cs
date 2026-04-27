@@ -1,5 +1,7 @@
 ﻿using AM.ApplicationCore.Domain;
 using AM.ApplicationCore.Services;
+using AM.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var flightMethods = new FlightMethods
 {
@@ -95,3 +97,43 @@ Console.WriteLine(mixedCasePassenger.UpperFullName());
 
 Console.WriteLine();
 Console.WriteLine("================== FIN ATELIER 3 ==================");
+
+
+
+using var ctx = new AMContext();
+ctx.Database.Migrate();
+
+var newFlightDate = new DateTime(2022, 5, 1, 10, 10, 10);
+bool flightExists = ctx.Flights.Any(f =>
+    f.Departure == "Tunis"
+    && f.Destination == "Rome"
+    && f.FlightDate == newFlightDate);
+
+if (!flightExists)
+{
+    var plane = new Plane
+    {
+        PlaneType = PlaneType.Airbus,
+        Capacity = 150,
+        ManufactureDate = new DateTime(2018, 1, 1)
+    };
+
+    ctx.Planes.Add(plane);
+
+    ctx.Flights.Add(new Flight
+    {
+        Departure = "Tunis",
+        Destination = "Rome",
+        FlightDate = newFlightDate,
+        EffectiveArrival = new DateTime(2022, 5, 1, 12, 10, 10),
+        Plane = plane,
+        EstimatedDuration = 120
+    });
+
+    ctx.SaveChanges();
+    Console.WriteLine("Inserted 1 new flight into the database.");
+}
+else
+{
+    Console.WriteLine("Flight already exists in the database (no insert).");
+}
