@@ -1,9 +1,13 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace AM.ApplicationCore.Domain;
 
 public class Staff : Passenger
 {
     public DateTime EmploymentDate { get; set; }
     public string? Function { get; set; }
+
+    [Column(TypeName = "money")]
     public double Salary { get; set; }
 
     public override string PassengerType()

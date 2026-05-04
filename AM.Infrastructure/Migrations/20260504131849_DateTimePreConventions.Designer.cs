@@ -4,6 +4,7 @@ using AM.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AM.Infrastructure.Migrations
 {
     [DbContext(typeof(AMContext))]
-    partial class AMContextModelSnapshot : ModelSnapshot
+    [Migration("20260504131849_DateTimePreConventions")]
+    partial class DateTimePreConventions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,11 @@ namespace AM.Infrastructure.Migrations
 
             modelBuilder.Entity("AM.ApplicationCore.Domain.Passenger", b =>
                 {
-                    b.Property<string>("PassportNumber")
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("date");
@@ -78,19 +83,18 @@ namespace AM.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PassportNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TelNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PassportNumber");
+                    b.HasKey("Id");
 
                     b.ToTable("Passengers");
 
@@ -127,12 +131,12 @@ namespace AM.Infrastructure.Migrations
                     b.Property<int>("FlightsFlightId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PassengersPassportNumber")
-                        .HasColumnType("nvarchar(7)");
+                    b.Property<int>("PassengersId")
+                        .HasColumnType("int");
 
-                    b.HasKey("FlightsFlightId", "PassengersPassportNumber");
+                    b.HasKey("FlightsFlightId", "PassengersId");
 
-                    b.HasIndex("PassengersPassportNumber");
+                    b.HasIndex("PassengersId");
 
                     b.ToTable("FlightPassenger");
                 });
@@ -147,8 +151,8 @@ namespace AM.Infrastructure.Migrations
                     b.Property<string>("Function")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Salary")
-                        .HasColumnType("money");
+                    b.Property<double>("Salary")
+                        .HasColumnType("float");
 
                     b.HasDiscriminator().HasValue("Staff");
                 });
@@ -185,7 +189,7 @@ namespace AM.Infrastructure.Migrations
 
                     b.HasOne("AM.ApplicationCore.Domain.Passenger", null)
                         .WithMany()
-                        .HasForeignKey("PassengersPassportNumber")
+                        .HasForeignKey("PassengersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

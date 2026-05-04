@@ -1,15 +1,31 @@
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace AM.ApplicationCore.Domain;
 
 public class Passenger
 {
     public int Id { get; set; }
+
+    [DisplayName("Date of Birth")]
+    [DataType(DataType.Date)]
     public DateTime BirthDate { get; set; }
+
+    [EmailAddress]
     public string? EmailAddress { get; set; }
+
+    [MinLength(3, ErrorMessage = "FirstName must be at least 3 characters.")]
+    [MaxLength(25, ErrorMessage = "FirstName must be at most 25 characters.")]
     public string? FirstName { get; set; }
+
     public string? LastName { get; set; }
-    public string? PassportNumber { get; set; }
+
+    [Key]
+    [StringLength(7, MinimumLength = 7)]
+    public string PassportNumber { get; set; } = string.Empty;
+
+    [RegularExpression(@"^\d{8}$", ErrorMessage = "TelNumber must contain exactly 8 digits.")]
     public string? TelNumber { get; set; }
     public ICollection<Flight> Flights { get; set; }
 

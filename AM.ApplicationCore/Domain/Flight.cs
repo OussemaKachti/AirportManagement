@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AM.ApplicationCore.Domain;
 
@@ -11,6 +12,10 @@ public class Flight
     public DateTime FlightDate { get; set; }
     public DateTime EffectiveArrival { get; set; }
     public double EstimatedDuration { get; set; }
+
+    [ForeignKey(nameof(Plane))]
+    public int? PlaneId { get; set; }
+
     public Plane? Plane { get; set; }
     public ICollection<Passenger> Passengers { get; set; }
 
